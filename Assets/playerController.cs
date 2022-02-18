@@ -18,28 +18,56 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     { 
-        
-        if (Input.GetKey(KeyCode.LeftArrow))
+        bool upKeyDown    = Input.GetKey(KeyCode.W);
+        bool rightKeyDown = Input.GetKey(KeyCode.D);
+        bool downKeyDown  = Input.GetKey(KeyCode.S);
+        bool leftKeyDown  = Input.GetKey(KeyCode.A);
+
+        if (upKeyDown)
         {
-            rb.velocity = new Vector3(-speed, 0, 0);
-            anim.Play("Walk_Left");
+            //Walking up and Right
+            if(rightKeyDown){
+                rb.velocity = new Vector3(speed, speed, 0);
+                anim.Play("Walk_Up_Right");
+            }
+            //Walking up and Left
+            else if(leftKeyDown){
+                rb.velocity = new Vector3(-speed, speed, 0);
+                anim.Play("Walk_Up_Right");
+            }
+            //Walking Up
+            else{
+                rb.velocity = new Vector3(0, speed, 0);
+                anim.Play("Walk_Up");
+            }
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else if (downKeyDown)
         {
-              rb.velocity = new Vector3(speed, 0, 0);
-            anim.Play("Walk_Right");
+            //walking down and right
+            if(rightKeyDown){
+                rb.velocity = new Vector3(speed, -speed, 0);
+                anim.Play("Walk_Down_Right");
+            }
+            //walk down and left
+            else if(leftKeyDown){
+                rb.velocity = new Vector3(-speed, -speed, 0);
+                anim.Play("Walk_Down_Left");
+            }
+            //walking Down
+            else{
+                rb.velocity = new Vector3(0, -speed, 0);
+                anim.Play("Walk_Down");
+            }
         }
-        else if (Input.GetKey(KeyCode.UpArrow))
-        {
-              rb.velocity = new Vector3(0, speed, 0);
-            anim.Play("Walk_Up");
+
+        else if(leftKeyDown){
+                rb.velocity = new Vector3(-speed, 0, 0);
+                anim.Play("Walk_Left");
         }
-        else if (Input.GetKey(KeyCode.DownArrow))
-        {
-            rb.velocity = new Vector3(0, -speed, 0);
-            anim.Play("Walk_Down");
+        else if(rightKeyDown){
+                rb.velocity = new Vector3(speed, 0, 0);
+                anim.Play("Walk_Up_Right");
         }
-        
         else{
             anim.Play("idle_0_degrees");
             rb.velocity = new Vector3(0, 0, 0);
