@@ -6,13 +6,16 @@ public class playerController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField]
-    float speed = 2;
+    float speedX = 2;
+    float speedY;
     private Animator anim;
     public Rigidbody2D rb;
     void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+
+        speedY = speedX/2;
     }
 
     // Update is called once per frame
@@ -27,17 +30,17 @@ public class playerController : MonoBehaviour
         {
             //Walking up and Right
             if(rightKeyDown){
-                rb.velocity = new Vector3(speed, speed, 0);
+                rb.velocity = new Vector3(speedX, speedY, 0);
                 anim.Play("Walk_Up_Right");
             }
             //Walking up and Left
             else if(leftKeyDown){
-                rb.velocity = new Vector3(-speed, speed, 0);
-                anim.Play("Walk_Up_Right");
+                rb.velocity = new Vector3(-speedX, speedY, 0);
+                anim.Play("Walk_Up_Left");
             }
             //Walking Up
             else{
-                rb.velocity = new Vector3(0, speed, 0);
+                rb.velocity = new Vector3(0, speedY, 0);
                 anim.Play("Walk_Up");
             }
         }
@@ -45,28 +48,28 @@ public class playerController : MonoBehaviour
         {
             //walking down and right
             if(rightKeyDown){
-                rb.velocity = new Vector3(speed, -speed, 0);
+                rb.velocity = new Vector3(speedX, -speedY, 0);
                 anim.Play("Walk_Down_Right");
             }
             //walk down and left
             else if(leftKeyDown){
-                rb.velocity = new Vector3(-speed, -speed, 0);
+                rb.velocity = new Vector3(-speedX, -speedY, 0);
                 anim.Play("Walk_Down_Left");
             }
             //walking Down
             else{
-                rb.velocity = new Vector3(0, -speed, 0);
+                rb.velocity = new Vector3(0, -speedY, 0);
                 anim.Play("Walk_Down");
             }
         }
 
         else if(leftKeyDown){
-                rb.velocity = new Vector3(-speed, 0, 0);
+                rb.velocity = new Vector3(-speedX, 0, 0);
                 anim.Play("Walk_Left");
         }
         else if(rightKeyDown){
-                rb.velocity = new Vector3(speed, 0, 0);
-                anim.Play("Walk_Up_Right");
+                rb.velocity = new Vector3(speedX, 0, 0);
+                anim.Play("Walk_Right");
         }
         else{
             anim.Play("idle_0_degrees");
