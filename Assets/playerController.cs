@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 public class playerController : MonoBehaviour
 {
@@ -15,31 +14,34 @@ public class playerController : MonoBehaviour
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
-        speedY = speedX/2;
+        speedY = speedX / 2;
     }
 
     // Update is called once per frame
-    void Update()
-    { 
-        bool upKeyDown    = Input.GetKey(KeyCode.W);
+    private void doPlayerMovement()
+    {
+        bool upKeyDown = Input.GetKey(KeyCode.W);
         bool rightKeyDown = Input.GetKey(KeyCode.D);
-        bool downKeyDown  = Input.GetKey(KeyCode.S);
-        bool leftKeyDown  = Input.GetKey(KeyCode.A);
+        bool downKeyDown = Input.GetKey(KeyCode.S);
+        bool leftKeyDown = Input.GetKey(KeyCode.A);
 
         if (upKeyDown)
         {
             //Walking up and Right
-            if(rightKeyDown){
+            if (rightKeyDown)
+            {
                 rb.velocity = new Vector3(speedX, speedY, 0);
                 anim.Play("Walk_Up_Right");
             }
             //Walking up and Left
-            else if(leftKeyDown){
+            else if (leftKeyDown)
+            {
                 rb.velocity = new Vector3(-speedX, speedY, 0);
                 anim.Play("Walk_Up_Left");
             }
             //Walking Up
-            else{
+            else
+            {
                 rb.velocity = new Vector3(0, speedY, 0);
                 anim.Play("Walk_Up");
             }
@@ -47,33 +49,56 @@ public class playerController : MonoBehaviour
         else if (downKeyDown)
         {
             //walking down and right
-            if(rightKeyDown){
+            if (rightKeyDown)
+            {
                 rb.velocity = new Vector3(speedX, -speedY, 0);
                 anim.Play("Walk_Down_Right");
             }
             //walk down and left
-            else if(leftKeyDown){
+            else if (leftKeyDown)
+            {
                 rb.velocity = new Vector3(-speedX, -speedY, 0);
                 anim.Play("Walk_Down_Left");
             }
             //walking Down
-            else{
+            else
+            {
                 rb.velocity = new Vector3(0, -speedY, 0);
                 anim.Play("Walk_Down");
             }
         }
 
-        else if(leftKeyDown){
-                rb.velocity = new Vector3(-speedX, 0, 0);
-                anim.Play("Walk_Left");
+        else if (leftKeyDown)
+        {
+            rb.velocity = new Vector3(-speedX, 0, 0);
+            anim.Play("Walk_Left");
         }
-        else if(rightKeyDown){
-                rb.velocity = new Vector3(speedX, 0, 0);
-                anim.Play("Walk_Right");
+        else if (rightKeyDown)
+        {
+            rb.velocity = new Vector3(speedX, 0, 0);
+            anim.Play("Walk_Right");
         }
-        else{
+        else
+        {
             anim.Play("idle_0_degrees");
             rb.velocity = new Vector3(0, 0, 0);
         }
+    }
+    private void checkCoinCollision()
+    {
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+         if (other.gameObject.CompareTag("coin"))
+        {
+            Destroy(other.gameObject);
+        }
+    }
+   
+    void Update()
+    {
+        doPlayerMovement();
+        checkCoinCollision();
     }
 }

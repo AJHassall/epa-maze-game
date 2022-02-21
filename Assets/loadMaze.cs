@@ -14,6 +14,8 @@ public class loadMaze : MonoBehaviour
 
     public Tile floorTile;
     public Tile wallTile;
+    public Tile coinTile;
+    public Tilemap coinTilemap;
     public Tilemap floorTilemap;
     public Tilemap wallTilemap;
 
@@ -31,17 +33,36 @@ public class loadMaze : MonoBehaviour
     {
         // 
     }
-
+    //initial the tile map object with values from an array.
+    private void setTile(Tilemap tm, Tile t, int x, int y){
+        tm.SetTile(new Vector3Int(x - m_MapWidth/2, y-m_MapHeight/2, 0), t);
+    }
     void initialiseTileMap(string [,] array){
         for (int y = 0; y < m_MapHeight; y++)
         {
             for (int x = 0; x <  m_MapWidth; x++)
             {
-                if( array[y,x] == "1"){
-                    wallTilemap.SetTile(new Vector3Int(x - m_MapWidth/ 2, y - m_MapHeight / 2, 0), wallTile) ;
-                }
-                else{
-                    floorTilemap.SetTile(new Vector3Int(x - m_MapWidth/ 2, y - m_MapHeight / 2, 0), floorTile) ;
+                switch (array[y,x])
+                {
+                    //wall
+                    case "1":{
+                        setTile(wallTilemap, wallTile, x, y);
+                    } break;
+                    //floor
+                     case "0":{
+                        setTile(floorTilemap, floorTile, x, y);
+                    } break;
+                    //enemy
+                     case "e":{
+                        setTile(floorTilemap, floorTile, x, y);
+                    } break;
+                    //coin
+                    case "c":{
+                        setTile(floorTilemap, floorTile, x, y);
+                        setTile(coinTilemap, coinTile, x, y);
+                    } break;
+                    
+                   
                 }
             
             }
@@ -51,12 +72,11 @@ public class loadMaze : MonoBehaviour
     string[,] loadMazeFromFile(string filePath){
         
         StreamReader inputStream = new StreamReader(filePath);
-
-        
         int lineNumber = 0;
 
         string[,] mazeArray = null;
-
+        //loop through each row of a given text file
+        //from the file create a 2d array that represents a room in the maze
         while(!inputStream.EndOfStream)
         {
             string inputLine = inputStream.ReadLine( );
@@ -76,9 +96,7 @@ public class loadMaze : MonoBehaviour
                 for (int x = 0; x < row.Length; x++)
                 {
                     mazeArray[lineNumber, x] = row[x];
-                    Debug.Log(x + "  " +lineNumber);
                 }
-                  
                 lineNumber++;
             }
         }
