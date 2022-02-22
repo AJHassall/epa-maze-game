@@ -16,14 +16,9 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    public void changeScore(int newScore){
+    public void changeScore(){
         score+=100;
-        text.text = "Gold: "+ score.ToString();
+        text.text = "X: "+ score.ToString();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }

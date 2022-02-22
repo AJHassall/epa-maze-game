@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.Tilemaps;
+using Pathfinding;
 
 
 public class loadMaze : MonoBehaviour
@@ -18,25 +19,28 @@ public class loadMaze : MonoBehaviour
     public Tilemap coinTilemap;
     public Tilemap floorTilemap;
     public Tilemap wallTilemap;
-
-
+    public GameObject enemyPrefab;
     
     void Start()
     {
-        string[,] maze = loadMazeFromFile(Path.GetFullPath(".")+ "/Assets/Maps/Maze1.txt");
+        string[,] maze = loadMazeFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Maze1.txt");
         initialiseTileMap(maze);     
 
+        StartCoroutine(scanPathingGrid());
     }
-
+    IEnumerator scanPathingGrid(){
+        yield return new WaitForSeconds(1f);
+        AstarPath.active.Scan();
+    }
     // Update is called once per frame
     void Update()
     {
-        // 
+     
     }
-    //initial the tile map object with values from an array.
     private void setTile(Tilemap tm, Tile t, int x, int y){
         tm.SetTile(new Vector3Int(x - m_MapWidth/2, y-m_MapHeight/2, 0), t);
     }
+    //initialise the tile map object with values from an array.
     void initialiseTileMap(string [,] array){
         for (int y = 0; y < m_MapHeight; y++)
         {
@@ -54,6 +58,8 @@ public class loadMaze : MonoBehaviour
                     } break;
                     //enemy
                      case "e":{
+                        Instantiate(enemyPrefab,floorTilemap.CellToWorld(new Vector3Int(x - m_MapWidth/2,y - m_MapHeight/2,0)) , new Quaternion());
+                        
                         setTile(floorTilemap, floorTile, x, y);
                     } break;
                     //coin

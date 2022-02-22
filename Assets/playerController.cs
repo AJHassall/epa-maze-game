@@ -17,7 +17,7 @@ public class playerController : MonoBehaviour
         speedY = speedX / 2;
     }
 
-    // Update is called once per frame
+    
     private void doPlayerMovement()
     {
         bool upKeyDown = Input.GetKey(KeyCode.W);
@@ -84,21 +84,10 @@ public class playerController : MonoBehaviour
             rb.velocity = new Vector3(0, 0, 0);
         }
     }
-    private void checkCoinCollision()
-    {
 
-    }
-
-    private void OnTriggerEnter2D(Collider2D other) {
-         if (other.gameObject.CompareTag("coin"))
-        {
-            Destroy(other.gameObject);
-        }
-    }
-   
+   // Update is called once per frame
     void Update()
     {
         doPlayerMovement();
-        checkCoinCollision();
     }
 }
