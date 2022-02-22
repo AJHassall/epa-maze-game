@@ -10,8 +10,8 @@ public class loadMaze : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    private int m_MapHeight = 0;
-    private int m_MapWidth  = 0;
+    private int m_MapHeight = 17;
+    private int m_MapWidth  = 17;
 
     public Tile floorTile;
     public Tile wallTile;
@@ -23,7 +23,7 @@ public class loadMaze : MonoBehaviour
     
     void Start()
     {
-        string[,] maze = loadMazeFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Maze1.txt");
+        string[,] maze = loadMazeFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Room1.txt");
         initialiseTileMap(maze);     
 
         StartCoroutine(scanPathingGrid());
@@ -37,6 +37,9 @@ public class loadMaze : MonoBehaviour
     {
      
     }
+
+
+    
     private void setTile(Tilemap tm, Tile t, int x, int y){
         tm.SetTile(new Vector3Int(x - m_MapWidth/2, y-m_MapHeight/2, 0), t);
     }
@@ -58,8 +61,7 @@ public class loadMaze : MonoBehaviour
                     } break;
                     //enemy
                      case "e":{
-                        Instantiate(enemyPrefab,floorTilemap.CellToWorld(new Vector3Int(x - m_MapWidth/2,y - m_MapHeight/2,0)) , new Quaternion());
-                        
+                        Instantiate(enemyPrefab,floorTilemap.CellToWorld(new Vector3Int(x - m_MapWidth/2,y - m_MapHeight/2,0)) , new Quaternion());                        
                         setTile(floorTilemap, floorTile, x, y);
                     } break;
                     //coin
