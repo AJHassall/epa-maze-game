@@ -15,41 +15,42 @@ public class loadMaze : MonoBehaviour
 
     public Tile floorTile;
     public Tile wallTile;
+    public Tile doorTile;
     public Tile coinTile;
     public Tilemap coinTilemap;
     public Tilemap floorTilemap;
     public Tilemap wallTilemap;
+    public Tilemap doorTileMap;
     public GameObject enemyPrefab;
+    private string [,] m_Maze;
     
     void Start()
     {
-        string[,] maze = loadMazeFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Room1.txt");
-        initialiseTileMap(maze);     
+        m_Maze = loadMazeFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Room1.txt");
+        initialiseTileMap(true);     
 
-        StartCoroutine(scanPathingGrid());
+
     }
-    IEnumerator scanPathingGrid(){
-        yield return new WaitForSeconds(1f);
-        AstarPath.active.Scan();
-    }
+  
     // Update is called once per frame
     void Update()
     {
      
     }
-
-
-    
     private void setTile(Tilemap tm, Tile t, int x, int y){
         tm.SetTile(new Vector3Int(x - m_MapWidth/2, y-m_MapHeight/2, 0), t);
     }
+
+    private Room GetCurrentRoom(){
+        return moveRoomHandler.rooms[moveRoomHandler.playerLocation.y, moveRoomHandler.playerLocation.x];
+    }
     //initialise the tile map object with values from an array.
-    void initialiseTileMap(string [,] array){
+    void initialiseTileMap(bool initial){
         for (int y = 0; y < m_MapHeight; y++)
         {
             for (int x = 0; x <  m_MapWidth; x++)
             {
-                switch (array[y,x])
+                switch (m_Maze[y,x])
                 {
                     //wall
                     case "1":{
@@ -61,7 +62,10 @@ public class loadMaze : MonoBehaviour
                     } break;
                     //enemy
                      case "e":{
-                        Instantiate(enemyPrefab,floorTilemap.CellToWorld(new Vector3Int(x - m_MapWidth/2,y - m_MapHeight/2,0)) , new Quaternion());                        
+                        if(initial || !GetCurrentRoom().isCleared){
+
+                            Instantiate(enemyPrefab,floorTilemap.CellToWorld(new Vector3Int(x - m_MapWidth/2,y - m_MapHeight/2,0)) , new Quaternion());                        
+                        }
                         setTile(floorTilemap, floorTile, x, y);
                     } break;
                     //coin
@@ -74,6 +78,23 @@ public class loadMaze : MonoBehaviour
                 }
             
             }
+        }
+        Room room = GetCurrentRoom();
+        if (room.hasNorthExit)
+        {
+            setTile(doorTileMap, doorTile, 3, 8);
+        }
+        if (room.hasEastExit)
+        {
+            setTile(doorTileMap, doorTile, 8, 14);
+        }
+        if (room.hasSouthExit)
+        {
+            setTile(doorTileMap, doorTile, 14, 14);
+        }
+        if (room.hasWestExit)
+        {
+            setTile(doorTileMap, doorTile, 14, 3);
         }
     }
 

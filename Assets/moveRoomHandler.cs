@@ -5,60 +5,42 @@ using System;
 using System.Text.RegularExpressions;
 using System.IO;
 public class Room{
-    private bool hasNorthExit = false;
-    private bool hasEastExit  = false;
-    private bool hasSouthExit = false;
-    private bool hasWestExit  = false;
-    private int currentRoomX;
-    private int currentRoomY;
-
-    private bool isCleared    = false;
+    public bool hasNorthExit = false;
+    public bool hasEastExit  = false;
+    public bool hasSouthExit = false;
+    public bool hasWestExit  = false;
+    public bool isCleared    = false;
     private string RemoveWhiteSpace(string str){
-        return str.Replace(" ", string.Empty);
+            return str.Replace(" ", string.Empty);
     }
-    private bool canMove(string direction){
+
+
+    public void RoomCleared(){
+        this.isCleared    = true;
+    }
+
+    public bool canMove(string direction, Vector2Int position){
          bool canMove = true;
          switch (direction)
             {                
                 case "north":{
-                    if(this.currentRoomY == 3) canMove = false;
+                    if(position.y == 0 || !this.hasNorthExit) canMove = false;
                 }   break;
                 case "east":{
-                    if(this.currentRoomX == 3) canMove = false;
+                    if(position.x == 3 || !this.hasEastExit) canMove = false;
                 }   break;
                 case "south":{
-                    if(this.currentRoomY == 0) canMove = false;
+                    if(position.y == 3 || !this.hasSouthExit) canMove = false;
                 }   break;
                 case "west":{
-                    if(this.currentRoomY == 0) canMove = false;
+                    if(position.x == 0 || !this.hasWestExit) canMove = false;
                 }   break;    
             }
-    
+  
         return this.isCleared && canMove;
     }
-    public void MoveToAdjacentRoom(string direction){
-        direction = RemoveWhiteSpace(direction.ToLower());
-
-        if (canMove(direction))
-        {
-            switch (direction)
-            {                
-                case "north":{
-                    this.currentRoomY++;
-                }   break;
-                case "east":{
-                    this.currentRoomX++;
-                }   break;
-                case "south":{
-                    this.currentRoomY--;
-                }   break;
-                case "west":{
-                    this.currentRoomX--;
-                }   break;    
-            }
-        }
-    }
-    public Room(string directions){
+  public Room(string directions){
+        
         directions = RemoveWhiteSpace(directions);
 
         foreach (string exit in directions.ToLower().Split(','))
@@ -84,7 +66,42 @@ public class Room{
 
 public class moveRoomHandler : MonoBehaviour
 {
+    public GameObject map;
+    public static Room[,] rooms;
+    public static Vector2Int playerLocation;
+    
+    private string RemoveWhiteSpace(string str){
+        return str.Replace(" ", string.Empty);
+    }
+    void RoomCleared(){
 
+        rooms[playerLocation.y, playerLocation.x].RoomCleared();
+    }
+    public bool MoveToAdjacentRoom(string direction, ref Vector2Int position, Room room){
+        direction = RemoveWhiteSpace(direction.ToLower());
+
+        if (room.canMove(direction, position))
+        {
+            switch (direction)
+            {                
+                case "north":{
+                    position.y--;
+                }   break;
+                case "east":{
+                    position.x++;
+                }   break;
+                case "south":{
+                    position.y++;
+                }   break;
+                case "west":{
+                    position.x--;
+                }   break;    
+            }
+            if(room.isCleared) map.BroadcastMessage("initialiseTileMap", false);
+            return true;
+        }
+        return false;
+    }
     Room[,] ReadRoomsFromFile(string filePath){
         
         StreamReader inputStream = new StreamReader(filePath);
@@ -102,7 +119,7 @@ public class moveRoomHandler : MonoBehaviour
             if(mazeArray == null){
                 mazeArray = new Room[mapHeight, mapWidth];
             }
-            string[] directions = inputLine.Split(',');
+            string[] directions = RemoveWhiteSpace(inputLine).Split(';');
             
 
             for (int x = 0; x < directions.Length; x++)
@@ -116,21 +133,42 @@ public class moveRoomHandler : MonoBehaviour
         inputStream.Close();  
         return mazeArray;
     }
-    private Room[,] Rooms;
-
     void Start(){
-        Rooms = ReadRoomsFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Room1.txt")
+        rooms = ReadRoomsFromFile(System.IO.Path.GetFullPath(".")+ "/Assets/Maps/Maze1.txt");
+        playerLocation = new Vector2Int(0,0);
     }
+
+    
+
     public void North(){
+        if (!MoveToAdjacentRoom("north", ref playerLocation, rooms[playerLocation.y, playerLocation.x]))
+        {
+        
+            Debug.Log("cant enter room");
+        }
+        Debug.Log(playerLocation);
         
     }
     public void East(){
-    
+        if (!MoveToAdjacentRoom("east", ref playerLocation, rooms[playerLocation.y, playerLocation.x]))
+        {
+              Debug.Log("cant enter room");
+        }
+        Debug.Log(playerLocation);
     }
     public void South(){
-
+        if (!MoveToAdjacentRoom("south", ref playerLocation, rooms[playerLocation.y, playerLocation.x]))
+        {
+            Debug.Log("cant enter room");
+        }
+        Debug.Log(playerLocation);
     }
     public void West(){
-        
+        if (!MoveToAdjacentRoom("west", ref playerLocation, rooms[playerLocation.y, playerLocation.x]))
+        {
+
+            Debug.Log("cant enter room");
+        }
+        Debug.Log(playerLocation);
     }
 }

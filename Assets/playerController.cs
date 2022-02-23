@@ -16,14 +16,24 @@ public class playerController : MonoBehaviour
 
         speedY = speedX / 2;
     }
-
-    
+    bool AnimatorIsPlaying(){
+     return anim.GetCurrentAnimatorStateInfo(0).length >
+            anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
+    }
+    private bool AnimatorIsPlaying(string stateName){
+        return AnimatorIsPlaying() && anim.GetCurrentAnimatorStateInfo(0).IsName(stateName);
+    }
     private void doPlayerMovement()
     {
         bool upKeyDown = Input.GetKey(KeyCode.W);
         bool rightKeyDown = Input.GetKey(KeyCode.D);
         bool downKeyDown = Input.GetKey(KeyCode.S);
         bool leftKeyDown = Input.GetKey(KeyCode.A);
+
+        if (Input.GetMouseButton(0))
+        {
+            anim.Play("Attack");
+        }
 
         if (upKeyDown)
         {
@@ -78,7 +88,7 @@ public class playerController : MonoBehaviour
             rb.velocity = new Vector3(speedX, 0, 0);
             anim.Play("Walk_Right");
         }
-        else
+        else if(!AnimatorIsPlaying("Attack"))
         {
             anim.Play("idle_0_degrees");
             rb.velocity = new Vector3(0, 0, 0);
